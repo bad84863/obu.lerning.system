@@ -25,9 +25,12 @@
         .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; }
 
         .course-card { border: 1px solid #ddd; padding: 15px; margin: 12px 0; border-radius: 6px; background: #fafafa; }
-        .btn-sm { width: auto; padding: 8px 14px; font-size: 14px; margin-right: 8px; }
+        .btn-sm { width: auto; padding: 8px 14px; font-size: 14px; margin-right: 8px; display: inline-block; text-decoration: none; border-radius: 5px; color: white; background: #28a745; font-weight: bold; cursor: pointer; border: none; }
+        .btn-sm:hover { background: #218838; }
         .btn-live { background: #e63946; }
         .btn-live:hover { background: #c1121f; }
+        .btn-file { background: #007bff; }
+        .btn-file:hover { background: #0056b3; }
         .btn-del { background: #dc3545; padding: 5px 10px; font-size: 12px; width: auto; margin: 0; }
 
         .video-box { margin-top: 20px; padding: 15px; background: #eef2f7; border-radius: 8px; border: 2px solid #1e3c72; }
@@ -88,29 +91,33 @@
 
     <div class="container">
 
-        <!-- INSTRUCTOR PANEL (ONLY VISIBLE TO INSTRUCTOR & ADMIN) -->
+        <!-- INSTRUCTOR PANEL (ADD COURSE & UPLOAD MODULE FILE) -->
         <div id="instructorPanel" class="panel-box hidden">
-            <h3 style="margin-top:0; color:#1e3c72;">👨‍🏫 Instructor Control Panel — Add Course & Start Live Class</h3>
+            <h3 style="margin-top:0; color:#1e3c72;">👨‍🏫 Instructor Panel — Add Course, Upload Module File & Start Live</h3>
             <div class="form-grid">
                 <input type="text" id="courseTitle" placeholder="Course Title (e.g., Database Systems)">
                 <input type="text" id="courseSchedule" placeholder="Schedule (e.g., Mon & Wed 2:00 PM)">
-                <input type="text" id="courseVideo" placeholder="YouTube Embed URL (Optional)">
+                <input type="text" id="courseVideo" placeholder="YouTube Video Link (Optional)">
             </div>
-            <button class="btn-sm" onclick="addCourse()">+ Publish Course & Live Room</button>
+            <div style="margin-top:10px; background:white; padding:10px; border-radius:5px; border:1px dashed #1e3c72;">
+                <label style="font-size:13px; font-weight:bold; color:#1e3c72;">📄 Upload Course Module File (PDF, DOCX, PPT, Image — Max 3MB):</label>
+                <input type="file" id="courseFile" accept=".pdf,.doc,.docx,.ppt,.pptx,.txt,.png,.jpg,.jpeg" style="margin-top:5px;">
+            </div>
+            <button class="btn-sm" style="margin-top:12px;" onclick="addCourse()">+ Publish Course & Upload Module</button>
         </div>
 
         <!-- LIVE CLASS & VIDEO PLAYER -->
         <div id="mediaContainer" class="video-box hidden">
             <div style="display: flex; justify-content: space-between; align-items: center;">
                 <h3 id="mediaTitle" style="margin: 0; color: #1e3c72;"></h3>
-                <button class="logout-btn" onclick="closeMedia()">Close Live / Video</button>
+                <button class="logout-btn" onclick="closeMedia()">Close Viewer</button>
             </div>
-            <p style="font-size: 13px; color: #555; margin: 5px 0;">* If on mobile, click <b>"Continue in browser"</b> and allow Camera & Microphone.</p>
+            <p style="font-size: 13px; color: #555; margin: 5px 0;">* If on mobile for Live Class, click <b>"Continue in browser"</b> and allow Camera & Microphone.</p>
             <iframe id="mediaFrame" allow="camera; microphone; fullscreen; display-capture" allowfullscreen></iframe>
         </div>
 
-        <!-- COURSES & LIVE SESSIONS LIST -->
-        <h2 style="text-align:left;">📚 Online Courses & Live Classrooms</h2>
+        <!-- COURSES, MODULES & LIVE SESSIONS LIST -->
+        <h2 style="text-align:left;">📚 Online Courses, Modules & Live Classrooms</h2>
         <div id="coursesList"></div>
 
         <!-- USERS / STUDENTS MANAGEMENT TABLE -->
@@ -132,21 +139,24 @@
 </div>
 
 <script>
-    // Default initial courses
     const defaultCourses = [
         {
             title: "Introduction to Software Engineering",
             instructor: "Dr. Dereje",
             schedule: "Monday & Wednesday (2:00 - 4:00)",
             video: "https://youtube.com",
-            room: "OBU-Software-Engineering"
+            room: "OBU-Software-Engineering",
+            fileName: "Software_Engineering_Module_1.txt",
+            fileData: "data:text/plain;charset=utf-8," + encodeURIComponent("OBU Software Engineering Module 1\n\n1. SDLC Phases\n2. Requirements Engineering\n3. System Design & Testing")
         },
         {
             title: "Web Development & Cloud Computing",
             instructor: "Mr. Chala",
             schedule: "Tuesday & Thursday (4:00 - 6:00)",
             video: "https://youtube.com",
-            room: "OBU-Web-Development"
+            room: "OBU-Web-Development",
+            fileName: "Web_Cloud_Module_1.txt",
+            fileData: "data:text/plain;charset=utf-8," + encodeURIComponent("OBU Web Development & Cloud Module 1\n\n1. HTML, CSS, JavaScript\n2. Spring Boot Backend\n3. Cloud Deployment on Render")
         }
     ];
 
@@ -168,31 +178,3 @@
         localStorage.setItem("obu_all_users", JSON.stringify(users));
 
         const currentUser = { name, email, role };
-        localStorage.setItem("obu_active_user", JSON.stringify(currentUser));
-        enterSystem(currentUser);
-    }
-
-    function loginUser() {
-        const email = document.getElementById('loginEmail').value;
-        const role = document.getElementById('loginRole').value;
-        if (!email) { alert("Please enter your email!"); return; }
-
-        const currentUser = { name: email.split('@')[0], email, role };
-        localStorage.setItem("obu_active_user", JSON.stringify(currentUser));
-        enterSystem(currentUser);
-    }
-
-    function enterSystem(user) {
-        document.getElementById('authSection').classList.add('hidden');
-        document.getElementById('mainSection').classList.remove('hidden');
-        document.getElementById('userDisplay').innerText = "Welcome, " + user.name;
-        document.getElementById('roleBadge').innerText = user.role.toUpperCase();
-
-        // Show Instructor Panel for Instructor and Admin
-        if (user.role === "Instructor" || user.role === "Admin") {
-            document.getElementById('instructorPanel').classList.remove('hidden');
-        } else {
-            document.getElementById('instructorPanel').classList.add('hidden');
-        }
-
-    // Show Admin Action column only for Admin
