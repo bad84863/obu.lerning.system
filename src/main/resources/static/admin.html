@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Panel - Student Passwords</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f9; }
+        table { width: 100%; border-collapse: collapse; background: white; }
+        th, td { padding: 12px; border: 1px solid #ddd; text-align: left; }
+        th { background: #343a40; color: white; }
+        button { padding: 6px 12px; background: #ffc107; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<h1>Admin Panel - Manage Student Passwords</h1>
+
+<table>
+    <thead>
+    <tr>
+        <th>ID</th>
+        <th>Full Name</th>
+        <th>Email</th>
+        <th>Current Password</th>
+        <th>New Password</th>
+        <th>Action</th>
+    </tr>
+    </thead>
+    <tbody id="studentTable"></tbody>
+</table>
+
+<script>
+    function loadStudents() {
+        fetch('/api/admin/students')
+            .then(res => res.json())
+            .then(students => {
+                const table = document.getElementById('studentTable');
+                table.innerHTML = '';
+                students.forEach(s => {
+                    table.innerHTML += `
+                            <tr>
+                                <td>${s.id}</td>
+                                <td>${s.fullName}</td>
+                                <td>${s.email}</td>
+                                <td><strong>${s.password}</strong></td>
+                                <td><input type="text" id="pass-${s.id}" placeholder="Enter new password"></td>
+                                <td><button onclick="updatePassword(${s.id})">Update</button></td>
+                            </tr>
+                        `;
+                });
+            });
+    }
+
+    function updatePassword(id) {
+        const newPassword = document.getElementById(`pass-${id}`).value;
+        if (!newPassword) return alert("Please enter a new password");
+
+        fetch(`/api/admin/students/${id}/password`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ password: newPassword })
+        })
+            .then(() => {
+                alert("Password updated!");
+                loadStudents();
+            });
+    }
+
+    loadStudents();
+</script>
+</body>
+</html>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Instructor Dashboard</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f9; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; max-width: 500px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        input, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+<h1>Instructor Dashboard</h1>
+
+<!-- Start Live Class -->
+<div class="card">
+    <h2>Start Live Class</h2>
+    <input type="text" id="liveTopic" placeholder="Lesson Topic (e.g., Java Basics)">
+    <input type="text" id="liveLink" placeholder="Meeting Link (Zoom / Google Meet URL)">
+    <button onclick="startLive()" style="background: #28a745;">Start Live Session</button>
+</div>
+
+<!-- Upload Module -->
+<div class="card">
+    <h2>Upload Course Module</h2>
+    <input type="text" id="moduleTitle" placeholder="Module Title (e.g., Chapter 1 Notes)">
+    <input type="file" id="moduleFile">
+    <button onclick="uploadModule()">Upload Module</button>
+</div>
+
+<script>
+    function startLive() {
+        const topic = document.getElementById('liveTopic').value;
+        const meetingLink = document.getElementById('liveLink').value;
+
+        fetch('/api/instructor/start-live', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ topic, meetingLink })
+        })
+            .then(res => res.json())
+            .then(() => alert("Live class started successfully!"));
+    }
+
+    function uploadModule() {
+        const title = document.getElementById('moduleTitle').value;
+        const file = document.getElementById('moduleFile').files[0];
+
+        const formData = new FormData();
+        formData.append('title', title);
+        formData.append('file', file);
+
+        fetch('/api/instructor/upload-module', {
+            method: 'POST',
+            body: formData
+        })
+            .then(res => res.json())
+            .then(() => {
+                alert("Module uploaded successfully!");
+                document.getElementById('moduleTitle').value = '';
+                document.getElementById('moduleFile').value = '';
+            });
+    }
+</script>
+</body>
+</html>

@@ -1,31 +1,63 @@
-package com.obu.obu.lerning.system.model;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Student Classroom</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 30px; background: #f4f4f9; }
+        .card { background: white; padding: 20px; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+        .btn { padding: 10px 15px; background: #28a745; color: white; text-decoration: none; border-radius: 5px; display: inline-block; }
+        .module-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #ddd; }
+    </style>
+</head>
+<body>
 
-import jakarta.persistence.*;
+<h1>Student Classroom</h1>
 
-@Entity
-public class Course {
-@Id
-@GeneratedValue(strategy = GenerationType.IDENTITY)
-private Long id;
+<!-- Live Class Section -->
+<div class="card">
+    <h2>Live Class</h2>
+    <div id="liveSection">Loading live class...</div>
+</div>
 
-private String courseCode;
-private String courseName;
-private int credit;
-private String liveLink;
+<!-- Course Modules Section -->
+<div class="card">
+    <h2>Course Modules</h2>
+    <div id="moduleList">Loading modules...</div>
+</div>
 
-// Getters fi Setters
-public Long getId() { return id; }
-public void setId(Long id) { this.id = id; }
+<script>
+    // Load Active Live Class
+    fetch('/api/student/live')
+        .then(res => {
+            if (!res.ok) throw new Error("No active live class right now.");
+            return res.json();
+        })
+        .then(live => {
+            document.getElementById('liveSection').innerHTML = `
+                    <p><strong>Topic:</strong> ${live.topic}</p>
+                    <a href="${live.meetingLink}" target="_blank" class="btn">Join Live Class Now</a>
+                `;
+        })
+        .catch(err => {
+            document.getElementById('liveSection').innerHTML = `<p>${err.message}</p>`;
+        });
 
-public String getCourseCode() { return courseCode; }
-public void setCourseCode(String courseCode) { this.courseCode = courseCode; }
-
-public String getCourseName() { return courseName; }
-public void setCourseName(String courseName) { this.courseName = courseName; }
-
-public int getCredit() { return credit; }
-public void setCredit(int credit) { this.credit = credit; }
-
-public String getLiveLink() { return liveLink; }
-public void setLiveLink(String liveLink) { this.liveLink = liveLink; }
-}
+    // Load All Modules
+    fetch('/api/student/modules')
+        .then(res => res.json())
+        .then(modules => {
+            const list = document.getElementById('moduleList');
+            list.innerHTML = '';
+            modules.forEach(m => {
+                list.innerHTML += `
+                        <div class="module-item">
+                            <span><strong>${m.title}</strong> (${m.fileName})</span>
+                            <a href="/api/student/download/${m.id}" class="btn" style="background: #007bff;">Download</a>
+                        </div>
+                    `;
+            });
+        });
+</script>
+</body>
+</html>

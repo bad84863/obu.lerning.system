@@ -1,136 +1,122 @@
 <!DOCTYPE html>
-<html lang="om">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>OBU Online Classroom</title>
+    <title>OBU LMS - Login & Register</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 0; background: #f4f7f6; }
-        nav { background: #1e3c72; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; color: white; }
-        nav a, nav button { color: white; text-decoration: none; margin-left: 15px; font-weight: bold; cursor: pointer; background: none; border: none; font-size: 15px; }
-        .logout-btn { background: #dc3545; padding: 7px 14px; border-radius: 4px; }
-        .container { max-width: 900px; margin: 30px auto; background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-        input { width: 22%; padding: 10px; margin: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        .add-btn { padding: 10px 15px; background: #28a745; color: white; border: none; border-radius: 4px; cursor: pointer; }
-        .join-btn { background: #007bff; color: white; padding: 6px 12px; text-decoration: none; border-radius: 4px; display: inline-block; }
-        .del-btn { background: #dc3545; color: white; padding: 6px 10px; border: none; border-radius: 4px; cursor: pointer; }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th, td { border: 1px solid #ddd; padding: 10px; text-align: left; }
-        th { background: #2a5298; color: white; }
-        .section { display: none; }
-        .active { display: block; }
+        body { font-family: Arial, sans-serif; background: #f0f2f5; margin: 0; padding: 20px; text-align: center; }
+        .header { margin-bottom: 20px; }
+        .header img { width: 90px; height: 90px; object-fit: contain; }
+        .header h1 { margin: 10px 0 5px; color: #1a365d; }
+        .container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
+        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); width: 320px; text-align: left; }
+        input, select, button { width: 100%; padding: 10px; margin: 8px 0; box-sizing: border-box; border-radius: 4px; border: 1px solid #ccc; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; font-weight: bold; }
+        button:hover { background: #0056b3; }
     </style>
 </head>
 <body>
 
-<nav>
-    <div><strong>OBU Online Learning</strong> | Baga Nagaan Dhufte: <span id="welcomeUser"></span></div>
-    <div>
-        <a onclick="showSection('coursesSec')">Koorsii & Online Class</a>
-        <a id="studentsNav" onclick="showSection('studentsSec')">Barattoota</a>
-        <button class="logout-btn" onclick="logout()">Ba'i (Logout)</button>
-    </div>
-</nav>
+<div class="header">
+    <img src="logo.png" alt="Oda Bultum University Logo">
+    <h1>Oda Bultum University LMS</h1>
+</div>
 
 <div class="container">
-    <div id="coursesSec" class="section active">
-        <h2>Koorsiiwwanii fi Barnoota Kallattii (Online Live Class)</h2>
-
-        <div id="instructorCourseForm">
-            <input type="text" id="courseCode" placeholder="Koodii (fkn: ECE301)">
-            <input type="text" id="courseTitle" placeholder="Maqaa Koorsii">
-            <input type="number" id="creditHour" placeholder="Credit">
-            <input type="text" id="liveLink" placeholder="Link Live Class (Meet/Zoom)">
-            <button class="add-btn" onclick="saveCourse()">Koorsii & Link Maxxansi</button>
-        </div>
-
-        <table>
-            <thead>
-            <tr><th>Koodii</th><th>Maqaa Koorsii</th><th>Credit</th><th>Online Class (Live)</th><th id="courseActionTh">Tarkaanfii</th></tr>
-            </thead>
-            <tbody id="courseTable"></tbody>
-        </table>
+    <!-- Login Form -->
+    <div class="box">
+        <h2>Login</h2>
+        <input type="email" id="loginEmail" placeholder="Email" required>
+        <input type="password" id="loginPassword" placeholder="Password" required>
+        <button onclick="login()">Login</button>
     </div>
 
-    <div id="studentsSec" class="section">
-        <h2>Tarree Barattoota Galmaa'anii</h2>
-        <table>
-            <thead>
-            <tr><th>ID</th><th>Maqaa</th><th>Email</th><th>Dippaartimantii</th><th>Tarkaanfii</th></tr>
-            </thead>
-            <tbody id="studentTable"></tbody>
-        </table>
+    <!-- Student Registration Form -->
+    <div class="box">
+        <h2>Student Register</h2>
+        <input type="text" id="regName" placeholder="Full Name" required>
+        <input type="email" id="regEmail" placeholder="Email" required>
+        <input type="password" id="regPassword" placeholder="Password" required>
+
+        <select id="regDept">
+            <option value="">-- Select Department --</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Software Engineering">Software Engineering</option>
+            <option value="Information Technology">Information Technology</option>
+            <option value="Information Systems">Information Systems</option>
+            <option value="Civil Engineering">Civil Engineering</option>
+            <option value="Electrical Engineering">Electrical Engineering</option>
+            <option value="Economics">Economics</option>
+            <option value="Management">Management</option>
+            <option value="Plant Science">Plant Science</option>
+        </select>
+
+        <select id="regYear">
+            <option value="">-- Select Year --</option>
+            <option value="1st Year">1st Year</option>
+            <option value="2nd Year">2nd Year</option>
+            <option value="3rd Year">3rd Year</option>
+            <option value="4th Year">4th Year</option>
+            <option value="5th Year">5th Year</option>
+        </select>
+
+        <button onclick="register()" style="background: #28a745;">Register as Student</button>
     </div>
 </div>
 
 <script>
-    const role = localStorage.getItem('userRole');
-    const userName = localStorage.getItem('userName');
-    if (!role) {
-        window.location.href = 'login.html';
+    function login() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        fetch('/api/auth/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Invalid email or password");
+                return res.json();
+            })
+            .then(user => {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+                if (user.role === 'STUDENT') window.location.href = 'classroom.html';
+                else if (user.role === 'INSTRUCTOR') window.location.href = 'instructor.html';
+                else if (user.role === 'ADMIN') window.location.href = 'admin.html';
+            })
+            .catch(err => alert(err.message));
     }
 
-    document.getElementById('welcomeUser').innerText = userName;
+    function register() {
+        const fullName = document.getElementById('regName').value;
+        const email = document.getElementById('regEmail').value;
+        const password = document.getElementById('regPassword').value;
+        const department = document.getElementById('regDept').value;
+        const studyYear = document.getElementById('regYear').value;
 
-    if (role === 'STUDENT') {
-        document.getElementById('instructorCourseForm').style.display = 'none';
-        document.getElementById('studentsNav').style.display = 'none';
-        document.getElementById('courseActionTh').style.display = 'none';
+        if (!department || !studyYear) {
+            return alert("Please select both Department and Year!");
+        }
+
+        fetch('/api/auth/register', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ fullName, email, password, department, studyYear })
+        })
+            .then(res => {
+                if (!res.ok) throw new Error("Registration failed! Email might already exist.");
+                return res.json();
+            })
+            .then(() => {
+                alert("Registration successful! Please login.");
+                document.getElementById('regName').value = '';
+                document.getElementById('regEmail').value = '';
+                document.getElementById('regPassword').value = '';
+                document.getElementById('regDept').value = '';
+                document.getElementById('regYear').value = '';
+            })
+            .catch(err => alert(err.message));
     }
-
-    function logout() {
-        localStorage.clear();
-        window.location.href = 'login.html';
-    }
-
-    function showSection(id) {
-        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
-        document.getElementById(id).classList.add('active');
-    }
-
-    function loadCourses() {
-        fetch('/courses').then(r => r.json()).then(data => {
-            let rows = '';
-            data.forEach(c => {
-                const linkBtn = c.liveLink ? `<a href="${c.liveLink}" target="_blank" class="join-btn">Dareetti Seeni (Join Live)</a>` : 'Link Hin Jiru';
-                const delBtn = role === 'INSTRUCTOR' ? `<td><button class="del-btn" onclick="deleteCourse(${c.id})">Haqi</button></td>` : '';
-                rows += `<tr><td>${c.courseCode}</td><td>${c.courseTitle}</td><td>${c.creditHour}</td><td>${linkBtn}</td>${delBtn}</tr>`;
-            });
-            document.getElementById('courseTable').innerHTML = rows;
-        });
-    }
-
-    function saveCourse() {
-        const c = {
-            courseCode: document.getElementById('courseCode').value,
-            courseTitle: document.getElementById('courseTitle').value,
-            creditHour: document.getElementById('creditHour').value,
-            liveLink: document.getElementById('liveLink').value
-        };
-        fetch('/courses', { method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(c) })
-            .then(() => { courseCode.value=''; courseTitle.value=''; creditHour.value=''; liveLink.value=''; loadCourses(); });
-    }
-
-    function deleteCourse(id) {
-        fetch('/courses/' + id, { method: 'DELETE' }).then(() => loadCourses());
-    }
-
-    function loadStudents() {
-        fetch('/students').then(r => r.json()).then(data => {
-            let rows = '';
-            data.forEach(s => {
-                rows += `<tr><td>${s.id}</td><td>${s.fullName}</td><td>${s.email}</td><td>${s.department}</td>
-                <td><button class="del-btn" onclick="deleteStudent(${s.id})">Haqi</button></td></tr>`;
-            });
-            document.getElementById('studentTable').innerHTML = rows;
-        });
-    }
-
-    function deleteStudent(id) {
-        fetch('/students/' + id, { method: 'DELETE' }).then(() => loadStudents());
-    }
-
-    loadCourses();
-    if (role === 'INSTRUCTOR') loadStudents();
 </script>
 </body>
 </html>
